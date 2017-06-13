@@ -25,10 +25,6 @@
         android:layout_height="wrap_content"
         android:text="Hello World!"
         android:id="@+id/textView"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_row="0"
-        android:layout_column="3"
         android:layout_gravity="center_horizontal"
         android:textSize="25dp" />
 
@@ -44,8 +40,6 @@
         android:text="+"
         android:id="@+id/button"
         android:onClick="buttonOnClick"
-        android:layout_row="14"
-        android:layout_column="3"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.09" />
 

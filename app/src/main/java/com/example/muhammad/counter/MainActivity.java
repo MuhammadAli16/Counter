@@ -1,6 +1,7 @@
 package com.example.muhammad.counter;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
@@ -21,22 +24,23 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     int x = 0;
-    int vibrateIntensity = 50;
+    int vibrateIntensity;
     boolean hapticFeedback;
     boolean volumeCounter;
 
 
-    public void feedback(int intensity) {
+    public void feedback() {
         if (hapticFeedback == true) {
             final Vibrator myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
             myVib.vibrate(vibrateIntensity);
+            System.out.println("Intenisty:" + vibrateIntensity);
         }
     }
 
-    public void editCounter(String xy) {
-        if (xy.equals("1")) {
+    public void editCounter(int xy) {
+        if (xy == 1) {
             x++;
-        } else if (xy.equals("-1")) {
+        } else if (xy == -1) {
             x--;
         }
         final TextView celValue = (TextView) findViewById(R.id.textView);
@@ -58,16 +62,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void buttonOnClick(View v) {
         // Vibrate function
-        feedback(vibrateIntensity);
-        editCounter("1");
+        feedback();
+        editCounter(1);
         SaveInt("counterValue", x);
 
     }
 
     public void DecrementButtonOnClick(View v) {
         // Vibrate function
-        feedback(vibrateIntensity);
-        editCounter("-1");
+        feedback();
+        editCounter(-1);
         SaveInt("counterValue", x);
 
     }
@@ -75,16 +79,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (volumeCounter == true) {
+        if (volumeCounter) {
             if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
                 // Vibrate function
-                feedback(vibrateIntensity);
-                editCounter("-1");
+                feedback();
+                editCounter(-1);
                 return true;
             } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                 // Vibrate function
-                feedback(vibrateIntensity);
-                editCounter("1");
+                feedback();
+                editCounter(1);
                 return true;
             }
         }
@@ -103,14 +107,14 @@ public class MainActivity extends AppCompatActivity {
         final TextView celValue = (TextView) findViewById(R.id.textView);
         celValue.setText(x + "");
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
     }
 
     @Override
@@ -133,7 +137,39 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.edit_values) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            //AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Edit Value");
+
+
+            // Set up the input
+            final EditText input = new EditText(this);
+            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+            input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(9)});
+
+            builder.setView(input);
+
+            // Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (input.getText().toString() != null && !input.getText().toString().isEmpty() ) {
+                        x = Integer.parseInt(input.getText().toString());
+                        final TextView celValue = (TextView) findViewById(R.id.textView);
+                        celValue.setText(x + "");
+                    }
+
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -142,6 +178,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        // Load counter value and set
+        LoadInt();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         hapticFeedback = prefs.getBoolean("hapticFeedback", true);
         volumeCounter = prefs.getBoolean("volumeCounter", true);
@@ -151,21 +189,20 @@ public class MainActivity extends AppCompatActivity {
         boolean decrementOnScreen = prefs.getBoolean("enableOnScreenDecrement",true);
         final Button button = (Button) findViewById(R.id.button);
         final Button decrementButton = (Button) findViewById(R.id.decrement);
-        if (incrementOnScreen == false) {
+        if (!incrementOnScreen) {
             button.setVisibility(View.GONE);
-        }  else if (incrementOnScreen == true) {
+        }  else {
             button.setVisibility(View.VISIBLE);
         }
 
-        if (decrementOnScreen == false) {
+        if (!decrementOnScreen) {
             decrementButton.setVisibility(View.GONE);
-        }  else if (decrementOnScreen == true) {
+        }  else {
             decrementButton.setVisibility(View.VISIBLE);
         }
 
         //vibration intensity
         vibrateIntensity = Integer.parseInt(prefs.getString("hapticFeedbackIntensity","0"));
-        System.out.println(vibrateIntensity + " internisituwy");
 
     }
 
