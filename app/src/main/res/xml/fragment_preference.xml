@@ -1,0 +1,45 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Vibration">
+
+        <CheckBoxPreference
+            android:key="hapticFeedback"
+            android:title="Haptic Feedback"
+            android:summary="Feedback when pressing counter"
+            android:defaultValue="true"/>
+        <ListPreference
+            android:defaultValue="1000"
+            android:dependency="hapticFeedback"
+            android:entries="@array/updateInterval"
+            android:entryValues="@array/updateIntervalValues"
+            android:key="hapticFeedbackIntensity"
+            android:summary="Allows adjusting of vibration intensity Current: %s"
+            android:title="Feedback Intensity" />
+
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Controls">
+
+        <CheckBoxPreference
+            android:key="enableOnScreenIncrement"
+            android:title="On Screen Increment Button"
+            android:summary="Enables On Screen Increment Button"
+            android:defaultValue="true"/>
+
+        <CheckBoxPreference
+            android:key="enableOnScreenDecrement"
+            android:title="On Screen Decrement Button"
+            android:summary="Enables On Screen Increment Button"
+            android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:key="volumeCounter"
+            android:title="Volume Controls"
+            android:summary="Use volume buttons to increment/decrement"
+            android:defaultValue="true"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

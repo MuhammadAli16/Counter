@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="updateInterval">
+        <item name="1000">10</item>
+        <item name="5000">20</item>
+        <item name="30000">30</item>
+        <item name="60000">50</item>
+    </string-array>
+
+    <string-array name="updateIntervalValues">
+        <item name="1000">10</item>
+        <item name="5000">20</item>
+        <item name="30000">30</item>
+        <item name="60000">50</item>
+    </string-array>
+</resources>
