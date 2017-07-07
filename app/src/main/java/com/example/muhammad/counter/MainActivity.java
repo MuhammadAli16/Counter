@@ -21,6 +21,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+/**
+ *   @author Muhammad Ali
+**/
+
 public class MainActivity extends AppCompatActivity {
 
     int x = 0;
