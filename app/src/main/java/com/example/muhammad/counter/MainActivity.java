@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
@@ -27,7 +25,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    int x = 0;
+    int counterValue = 0;
     int vibrateIntensity;
     boolean hapticFeedback;
     boolean volumeCounter;
@@ -37,18 +35,17 @@ public class MainActivity extends AppCompatActivity {
         if (hapticFeedback == true) {
             final Vibrator myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
             myVib.vibrate(vibrateIntensity);
-            System.out.println("Intenisty:" + vibrateIntensity);
         }
     }
 
-    public void editCounter(int xy) {
-        if (xy == 1) {
-            x++;
-        } else if (xy == -1) {
-            x--;
+    public void editCounter(int val) {
+        if (val == 1) {
+            counterValue++;
+        } else if (val == -1) {
+            counterValue--;
         }
         final TextView celValue = (TextView) findViewById(R.id.textView);
-        celValue.setText(x + "");
+        celValue.setText(counterValue + "");
     }
 
     // Save value
@@ -61,14 +58,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void LoadInt() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        x = sharedPreferences.getInt("counterValue", 0);
+        counterValue = sharedPreferences.getInt("counterValue", 0);
     }
 
     public void buttonOnClick(View v) {
         // Vibrate function
         feedback();
         editCounter(1);
-        SaveInt("counterValue", x);
+        SaveInt("counterValue", counterValue);
 
     }
 
@@ -76,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
         // Vibrate function
         feedback();
         editCounter(-1);
-        SaveInt("counterValue", x);
+        SaveInt("counterValue", counterValue);
 
     }
 
-
+    // Volume button increment/decrement
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (volumeCounter) {
@@ -109,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         // Load counter value and set
         LoadInt();
         final TextView celValue = (TextView) findViewById(R.id.textView);
-        celValue.setText(x + "");
+        celValue.setText(counterValue + "");
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -159,9 +156,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (input.getText().toString() != null && !input.getText().toString().isEmpty() ) {
-                        x = Integer.parseInt(input.getText().toString());
+                        counterValue = Integer.parseInt(input.getText().toString());
                         final TextView celValue = (TextView) findViewById(R.id.textView);
-                        celValue.setText(x + "");
+                        celValue.setText(counterValue + "");
                     }
 
                 }
