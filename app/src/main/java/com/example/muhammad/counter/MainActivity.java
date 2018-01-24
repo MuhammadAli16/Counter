@@ -25,14 +25,21 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    int counterValue = 0;
+    Counter counter;
+    final String STOREDCOUNTER = "saveCounter";
+    final int INCREMENTCOUNTER = 1;
+    final int DECREMENTCOUNTER = -1;
+
+    TextView celValue = null;
+
+    //int counterValue = 0;
     int vibrateIntensity;
     boolean hapticFeedback;
     boolean volumeCounter;
 
 
     public void feedback() {
-        if (hapticFeedback == true) {
+        if (hapticFeedback) {
             final Vibrator myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
             myVib.vibrate(vibrateIntensity);
         }
@@ -40,41 +47,42 @@ public class MainActivity extends AppCompatActivity {
 
     public void editCounter(int val) {
         if (val == 1) {
-            counterValue++;
+            counter.adjustCounter(INCREMENTCOUNTER);
         } else if (val == -1) {
-            counterValue--;
+            counter.adjustCounter(DECREMENTCOUNTER);
         }
-        final TextView celValue = (TextView) findViewById(R.id.textView);
-        celValue.setText(counterValue + "");
+
+        updateDisplayValue();
+        // Vibrate function + save
+        feedback();
+        SaveInt(STOREDCOUNTER, counter.getCounter());
     }
+
+    public void updateDisplayValue(){
+        celValue.setText(counter.getCounterStr());
+    }
+
 
     // Save value
     public void SaveInt(String key, int value) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public void LoadInt() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        counterValue = sharedPreferences.getInt("counterValue", 0);
+        int counterVal = sharedPreferences.getInt(STOREDCOUNTER, 0);
+        counter.setCounter(counterVal);
     }
 
     public void buttonOnClick(View v) {
-        // Vibrate function
-        feedback();
-        editCounter(1);
-        SaveInt("counterValue", counterValue);
-
+        editCounter(INCREMENTCOUNTER);
     }
 
     public void DecrementButtonOnClick(View v) {
-        // Vibrate function
-        feedback();
-        editCounter(-1);
-        SaveInt("counterValue", counterValue);
-
+        editCounter(DECREMENTCOUNTER);
     }
 
     // Volume button increment/decrement
@@ -82,14 +90,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (volumeCounter) {
             if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
-                // Vibrate function
-                feedback();
-                editCounter(-1);
+                editCounter(DECREMENTCOUNTER);
                 return true;
             } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                // Vibrate function
-                feedback();
-                editCounter(1);
+                editCounter(INCREMENTCOUNTER);
                 return true;
             }
         }
@@ -103,10 +107,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        celValue = (TextView) findViewById(R.id.textView);
+
+        counter = new Counter();
+
         // Load counter value and set
         LoadInt();
-        final TextView celValue = (TextView) findViewById(R.id.textView);
-        celValue.setText(counterValue + "");
+        updateDisplayValue();
+
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +124,42 @@ public class MainActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //            }
 //        });
+    }
+
+    public void editCounterValue(){
+        //AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit Value");
+
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(9)});
+
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (!input.getText().toString().isEmpty() ) {
+                    int newCounterVal = Integer.parseInt(input.getText().toString());
+                    counter.setCounter(newCounterVal);
+                    updateDisplayValue();
+                }
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     @Override
@@ -138,39 +182,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.edit_values) {
-            //AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Edit Value");
-
-
-            // Set up the input
-            final EditText input = new EditText(this);
-            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-            input.setInputType(InputType.TYPE_CLASS_NUMBER);
-            input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(9)});
-
-            builder.setView(input);
-
-            // Set up the buttons
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (input.getText().toString() != null && !input.getText().toString().isEmpty() ) {
-                        counterValue = Integer.parseInt(input.getText().toString());
-                        final TextView celValue = (TextView) findViewById(R.id.textView);
-                        celValue.setText(counterValue + "");
-                    }
-
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            builder.show();
+            editCounterValue();
         }
 
         return super.onOptionsItemSelected(item);
