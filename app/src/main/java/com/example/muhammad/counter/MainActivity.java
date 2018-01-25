@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         counter.setCounter(counterVal);
     }
 
-    public void buttonOnClick(View v) {
+    public void IncrementButtonOnClick(View v) {
         editCounter(INCREMENTCOUNTER);
     }
 
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         // on screen buttons
         boolean incrementOnScreen = prefs.getBoolean("enableOnScreenIncrement",true);
         boolean decrementOnScreen = prefs.getBoolean("enableOnScreenDecrement",true);
-        final Button button = (Button) findViewById(R.id.button);
+        final Button button = (Button) findViewById(R.id.increment);
         final Button decrementButton = (Button) findViewById(R.id.decrement);
         if (!incrementOnScreen) {
             button.setVisibility(View.GONE);
