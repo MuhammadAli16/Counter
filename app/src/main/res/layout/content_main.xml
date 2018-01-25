@@ -21,12 +21,12 @@
         android:layout_weight="0.21" />
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/textView"
         android:layout_gravity="center_horizontal"
-        android:textSize="25dp" />
+        android:text="0"
+        android:textSize="60sp" />
 
     <Space
         android:layout_width="match_parent"
@@ -34,22 +34,23 @@
         android:layout_gravity="center_horizontal" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="172dp"
+        android:id="@+id/increment"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="+"
-        android:id="@+id/button"
-        android:onClick="buttonOnClick"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.09" />
+        android:layout_weight="0.09"
+        android:onClick="IncrementButtonOnClick"
+        android:text="+"
+        android:textSize="30sp" />
 
     <Button
-        android:layout_width="142dp"
-        android:layout_height="wrap_content"
-        android:text="-"
         android:id="@+id/decrement"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.07"
-        android:onClick="DecrementButtonOnClick" />
+        android:onClick="DecrementButtonOnClick"
+        android:text="-"
+        android:textSize="30sp" />
 
 </LinearLayout>
