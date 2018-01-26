@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         updateDisplayValue();
         // Vibrate function + save
         feedback();
-        SaveInt(STOREDCOUNTER, counter.getCounter());
+        saveInt(STOREDCOUNTER, counter.getCounter());
     }
 
     public void updateDisplayValue(){
@@ -64,24 +64,24 @@ public class MainActivity extends AppCompatActivity {
 
 
     // Save value
-    public void SaveInt(String key, int value) {
+    public void saveInt(String key, int value) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(key, value);
         editor.apply();
     }
 
-    public void LoadInt() {
+    public void loadInt() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int counterVal = sharedPreferences.getInt(STOREDCOUNTER, 0);
         counter.setCounter(counterVal);
     }
 
-    public void buttonOnClick(View v) {
+    public void incrementButtonOnClick(View v) {
         editCounter(INCREMENTCOUNTER);
     }
 
-    public void DecrementButtonOnClick(View v) {
+    public void decrementButtonOnClick(View v) {
         editCounter(DECREMENTCOUNTER);
     }
 
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         counter = new Counter();
 
         // Load counter value and set
-        LoadInt();
+        loadInt();
         updateDisplayValue();
 
 
@@ -191,31 +191,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        // Load counter value and set
-        LoadInt();
+        // Load counter value and settings
+        loadInt();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         hapticFeedback = prefs.getBoolean("hapticFeedback", true);
         volumeCounter = prefs.getBoolean("volumeCounter", true);
+        //vibration intensity
+        vibrateIntensity = Integer.parseInt(prefs.getString("hapticFeedbackIntensity","0"));
 
         // on screen buttons
         boolean incrementOnScreen = prefs.getBoolean("enableOnScreenIncrement",true);
         boolean decrementOnScreen = prefs.getBoolean("enableOnScreenDecrement",true);
-        final Button button = (Button) findViewById(R.id.button);
+        final Button button = (Button) findViewById(R.id.increment);
         final Button decrementButton = (Button) findViewById(R.id.decrement);
-        if (!incrementOnScreen) {
-            button.setVisibility(View.GONE);
-        }  else {
-            button.setVisibility(View.VISIBLE);
-        }
 
-        if (!decrementOnScreen) {
-            decrementButton.setVisibility(View.GONE);
-        }  else {
-            decrementButton.setVisibility(View.VISIBLE);
-        }
+        if (!incrementOnScreen) button.setVisibility(View.GONE);
+        else button.setVisibility(View.VISIBLE);
 
-        //vibration intensity
-        vibrateIntensity = Integer.parseInt(prefs.getString("hapticFeedbackIntensity","0"));
+        if (!decrementOnScreen) decrementButton.setVisibility(View.GONE);
+        else decrementButton.setVisibility(View.VISIBLE);
+
+
 
     }
 
